@@ -179,7 +179,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .hero__model {
   font-size: clamp(64px, 10.4vw, 188px); font-weight: 200; line-height: .9; letter-spacing: -.06em;
   margin-left: -.05em; padding-bottom: .05em;
-  overflow: hidden; white-space: nowrap;
+  white-space: nowrap;
+  /* маска только сверху и снизу (там уезжают буквы); по бокам буквы не режем */
+  clip-path: inset(0 -.5em 0 -.5em);
 }
 .nm { display: inline-flex; }
 .nm__c { display: inline-block; transition: transform 1.25s var(--ease) calc(var(--i) * 45ms); }
