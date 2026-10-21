@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#060606"/>
+  <g fill="none" stroke="#EDEDE9" stroke-width="4.4" stroke-linejoin="round">
+    <!-- Х -->
+    <path d="M7.5 21 L20.5 41 M20.5 21 L7.5 41"/>
+    <!-- О -->
+    <ellipse cx="32" cy="31" rx="5.6" ry="8"/>
+    <!-- Д -->
+    <path d="M46 41 V21 H54 V41 M42.5 41 H57.5 M42.5 39 V46 M57.5 39 V46"/>
+  </g>
+</svg>
