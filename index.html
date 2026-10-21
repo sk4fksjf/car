@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#060606">
+  <title>ХОД — каршеринг представительского класса</title>
+  <meta name="description" content="Mercedes-Benz S-Class и BMW 7 Series поминутно. Открываете с телефона, бензин, КАСКО без франшизы и парковки уже в цене.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/s-class.jpg">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><span data-progress></span></div>
+
+<header class="header" data-header>
+  <div class="header__inner">
+    <a class="logo" href="#top" aria-label="ХОД — на главную">ХОД</a>
+    <nav class="nav" data-nav>
+      <a href="#fleet">Автопарк</a>
+      <a href="#how">Как это работает</a>
+      <a href="#prices">Тарифы</a>
+      <a href="#zone">Зона</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a class="btn btn--line btn--sm header__cta" href="#app"><span>Приложение</span></a>
+    <button class="burger" data-burger aria-label="Меню" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top" data-hero>
+    <div class="hero__media" data-hero-media>
+      <!-- ролик 0: S-Class уезжает, приезжает BMW; ролик 1 — наоборот -->
+      <video class="hero__video is-active" data-clip="0" src="assets/video/s-class-to-bmw7.mp4" poster="assets/img/s-class.jpg" muted playsinline preload="auto" disablepictureinpicture></video>
+      <video class="hero__video" data-clip="1" src="assets/video/bmw7-to-s-class.mp4" poster="assets/img/bmw7.jpg" muted playsinline preload="auto" disablepictureinpicture></video>
+      <div class="hero__shade" aria-hidden="true"></div>
+    </div>
+
+    <div class="hero__content wrap" data-hero-content>
+      <div class="hero__top">
+        <p class="label" data-reveal>Каршеринг представительского класса&nbsp;&nbsp;/&nbsp;&nbsp;Москва</p>
+        <h1 class="hero__title split" data-reveal>
+          <span class="line"><span>Флагман</span></span>
+          <span class="line"><span>по&nbsp;минутам</span></span>
+        </h1>
+      </div>
+
+      <div class="hero__bottom" data-reveal style="--d:3">
+        <div class="hero__car">
+          <p class="label hero__count"><span data-count>01</span>&nbsp;/&nbsp;<span data-total>02</span></p>
+          <div class="hero__info" data-carinfo>
+            <p class="hero__model"><span data-car-model>Mercedes-Benz S-Class</span> <em data-car-version>S 450 4MATIC Long</em></p>
+            <p class="hero__spec" data-car-spec>3.0 л · 367 л.с. · 0–100 км/ч за 5,1 с</p>
+          </div>
+        </div>
+        <div class="hero__ctrl">
+          <p class="hero__price" data-carprice><span data-car-price>49</span>&nbsp;₽<small>/ минута</small></p>
+          <button class="next" data-next aria-label="Следующий автомобиль">
+            <svg class="next__ring" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="next__track" cx="50" cy="50" r="49"/>
+              <circle class="next__bar" cx="50" cy="50" r="49" data-ring/>
+            </svg>
+            <span class="next__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 12h17m-6-6 6 6-6 6"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M3 12h17m-6-6 6 6-6 6"/></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ МАНИФЕСТ ============ -->
+  <section class="manifesto">
+    <div class="wrap">
+      <p class="label" data-reveal>Коротко</p>
+      <p class="manifesto__text" data-words>Две модели — и&nbsp;обе флагманы своих марок. Mercedes-Benz S-Class и&nbsp;BMW 7&nbsp;Series ждут в&nbsp;центре Москвы чистыми, заправленными и&nbsp;прогретыми. Без менеджеров, бумажных договоров и&nbsp;залога: открываете с&nbsp;телефона и&nbsp;едете.</p>
+
+      <div class="stats">
+        <div class="stat" data-reveal>
+          <strong class="stat__num"><span data-count-to="140">140</span></strong>
+          <p class="stat__label">автомобилей в&nbsp;парке</p>
+        </div>
+        <div class="stat" data-reveal style="--d:1">
+          <strong class="stat__num"><span data-count-to="2">2</span><small>года</small></strong>
+          <p class="stat__label">максимальный возраст машины — потом она уходит из&nbsp;парка</p>
+        </div>
+        <div class="stat" data-reveal style="--d:2">
+          <strong class="stat__num"><span data-count-to="30">30</span><small>мин</small></strong>
+          <p class="stat__label">подача к&nbsp;вашему адресу в&nbsp;пределах ТТК</p>
+        </div>
+        <div class="stat" data-reveal style="--d:3">
+          <strong class="stat__num">0<small>₽</small></strong>
+          <p class="stat__label">залог и&nbsp;франшиза по&nbsp;КАСКО</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ РАСКРЫТИЕ КАДРА ============ -->
+  <section class="expand" data-expand aria-label="Автопарк">
+    <div class="expand__sticky">
+      <div class="expand__frame" data-expand-frame>
+        <img src="assets/img/bmw7.jpg" alt="BMW 7 Series в студии, вид сбоку" data-expand-img>
+        <div class="expand__shade"></div>
+      </div>
+      <div class="expand__text wrap" data-expand-text>
+        <p class="label">01&nbsp;&nbsp;/&nbsp;&nbsp;Автопарк</p>
+        <h2 class="expand__title">Весь парк — чёрный.<br>Без исключений.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ АВТОПАРК ============ -->
+  <section class="fleet wrap" id="fleet">
+    <article class="car">
+      <div class="car__media" data-reveal="clip">
+        <div class="car__clip">
+          <div class="car__layers" data-parallax>
+            <img src="assets/img/s-class.jpg" alt="Mercedes-Benz S-Class в студии, вид сбоку" loading="lazy">
+          </div>
+        </div>
+      </div>
+      <div class="car__body">
+        <p class="label" data-reveal>01 — Mercedes-Benz</p>
+        <h3 class="car__title" data-reveal>S-Class<span>S 450 4MATIC Long</span></h3>
+        <dl class="specs" data-reveal style="--d:1">
+          <div><dt>Двигатель</dt><dd>3.0 л, 367 л.с.</dd></div>
+          <div><dt>0–100 км/ч</dt><dd>5,1 с</dd></div>
+          <div><dt>Привод</dt><dd>Полный</dd></div>
+          <div><dt>Коробка</dt><dd>9G-TRONIC</dd></div>
+          <div><dt>Салон</dt><dd>Массаж и&nbsp;вентиляция сидений, Burmester 3D</dd></div>
+        </dl>
+        <p class="car__price" data-reveal style="--d:2"><b>49&nbsp;₽</b> минута<span>Сутки — 15&nbsp;900&nbsp;₽</span></p>
+      </div>
+    </article>
+
+    <article class="car car--flip">
+      <div class="car__media" data-reveal="clip">
+        <div class="car__clip">
+          <div class="car__layers" data-parallax>
+            <img src="assets/img/bmw7.jpg" alt="BMW 7 Series в студии, вид сбоку" loading="lazy">
+          </div>
+        </div>
+      </div>
+      <div class="car__body">
+        <p class="label" data-reveal>02 — BMW</p>
+        <h3 class="car__title" data-reveal>7 Series<span>740Li xDrive</span></h3>
+        <dl class="specs" data-reveal style="--d:1">
+          <div><dt>Двигатель</dt><dd>3.0 л, 380 л.с.</dd></div>
+          <div><dt>0–100 км/ч</dt><dd>5,4 с</dd></div>
+          <div><dt>Привод</dt><dd>Полный</dd></div>
+          <div><dt>Коробка</dt><dd>8-ступенчатый автомат</dd></div>
+          <div><dt>Салон</dt><dd>Панорамная крыша, Bowers&nbsp;&amp;&nbsp;Wilkins</dd></div>
+        </dl>
+        <p class="car__price" data-reveal style="--d:2"><b>44&nbsp;₽</b> минута<span>Сутки — 14&nbsp;500&nbsp;₽</span></p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ КАК ЭТО РАБОТАЕТ ============ -->
+  <section class="how" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label" data-reveal>02&nbsp;&nbsp;/&nbsp;&nbsp;Как это работает</p>
+        <h2 class="sec-head__title split" data-reveal>
+          <span class="line"><span>Четыре шага —</span></span>
+          <span class="line"><span>и&nbsp;вы за&nbsp;рулём</span></span>
+        </h2>
+      </div>
+
+      <div class="how__grid">
+        <div class="how__phone-col">
+          <div class="phone">
+            <div class="phone__screen">
+              <span class="phone__notch"></span>
+
+              <div class="screen screen--map is-active" data-screen="0">
+                <div class="pmap">
+                  <span class="pmap__street" style="--r:-18deg; --t:34%"></span>
+                  <span class="pmap__street" style="--r:12deg; --t:60%"></span>
+                  <span class="pmap__street pmap__street--v" style="--r:8deg; --l:36%"></span>
+                  <span class="pmap__street pmap__street--v" style="--r:-6deg; --l:72%"></span>
+                  <span class="pmap__pin" style="left:24%; top:24%">S</span>
+                  <span class="pmap__pin pmap__pin--near" style="left:54%; top:44%">S</span>
+                  <span class="pmap__pin" style="left:70%; top:20%">7</span>
+                  <span class="pmap__pin" style="left:20%; top:56%">7</span>
+                  <span class="pmap__me"></span>
+                </div>
+                <div class="sheet">
+                  <span class="sheet__grip"></span>
+                  <p class="sheet__title">Рядом 4 автомобиля</p>
+                  <p class="sheet__sub">Ближайший — S-Class, 140 м</p>
+                </div>
+              </div>
+
+              <div class="screen" data-screen="1">
+                <p class="screen__label">Бронирование</p>
+                <div class="screen__img"><img src="assets/img/s-class.jpg" alt="" loading="lazy"></div>
+                <p class="screen__model">S-Class</p>
+                <p class="screen__plate">А 001 ХО 777</p>
+                <div class="fuel"><span style="width:82%"></span></div>
+                <p class="screen__row"><span>Топливо</span><b>82% · 610 км</b></p>
+                <p class="screen__row"><span>Пешком</span><b>2 мин</b></p>
+                <span class="screen__btn">Забронировать</span>
+                <p class="screen__note">20 минут брони — бесплатно</p>
+              </div>
+
+              <div class="screen screen--unlock" data-screen="2">
+                <p class="screen__label">S-Class · А 001 ХО</p>
+                <div class="unlock">
+                  <svg class="unlock__ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="59"/></svg>
+                  <svg class="unlock__icon" viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 9.6-2"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg>
+                </div>
+                <p class="screen__model">Удерживайте,<br>чтобы открыть</p>
+                <p class="screen__note">Климат включён · в салоне 21°</p>
+              </div>
+
+              <div class="screen" data-screen="3">
+                <p class="screen__label">Поездка завершена</p>
+                <p class="screen__total">1 176 ₽</p>
+                <p class="screen__row"><span>В пути</span><b>24 мин</b></p>
+                <p class="screen__row"><span>Тариф</span><b>S-Class · 49 ₽</b></p>
+                <p class="screen__row"><span>Парковка</span><b>0 ₽</b></p>
+                <p class="screen__row"><span>Топливо</span><b>включено</b></p>
+                <p class="screen__row"><span>Проехали</span><b>11,2 км</b></p>
+                <span class="screen__btn screen__btn--ghost">Чек на почте</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li class="step is-active" data-step="0">
+            <span class="step__num">01</span>
+            <h3 class="step__title">Выберите машину</h3>
+            <p class="step__text">На&nbsp;карте видны свободные S-Class и&nbsp;7&nbsp;Series рядом с&nbsp;вами. Бронь держится 20&nbsp;минут бесплатно. Не&nbsp;хотите идти — закажите подачу к&nbsp;подъезду.</p>
+          </li>
+          <li class="step" data-step="1">
+            <span class="step__num">02</span>
+            <h3 class="step__title">Осмотрите её</h3>
+            <p class="step__text">Четыре фото — по&nbsp;одному с&nbsp;каждой стороны. Это&nbsp;займёт минуту и&nbsp;защитит вас от&nbsp;чужих царапин: всё, что&nbsp;было до&nbsp;вас, остаётся за&nbsp;прошлым водителем.</p>
+          </li>
+          <li class="step" data-step="2">
+            <span class="step__num">03</span>
+            <h3 class="step__title">Откройте с&nbsp;телефона</h3>
+            <p class="step__text">Двери открываются из&nbsp;приложения, двигатель запускается кнопкой. Климат можно включить заранее — салон встретит нужной температурой.</p>
+          </li>
+          <li class="step" data-step="3">
+            <span class="step__num">04</span>
+            <h3 class="step__title">Оставьте в&nbsp;зоне</h3>
+            <p class="step__text">Любое разрешённое место внутри зоны, включая платные парковки центра. Нажали «Завершить» — чек пришёл на&nbsp;почту.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ТАРИФЫ ============ -->
+  <section class="prices wrap" id="prices">
+    <div class="sec-head sec-head--row">
+      <div>
+        <p class="label" data-reveal>03&nbsp;&nbsp;/&nbsp;&nbsp;Тарифы</p>
+        <h2 class="sec-head__title split" data-reveal>
+          <span class="line"><span>Цена не&nbsp;меняется</span></span>
+          <span class="line"><span>в&nbsp;час пик</span></span>
+        </h2>
+      </div>
+      <p class="sec-head__lead" data-reveal style="--d:2">Минута стоит одинаково днём, ночью и&nbsp;в&nbsp;дождь. Для&nbsp;долгих поездок — пакеты: они&nbsp;выгоднее поминутной оплаты примерно после 55&nbsp;минут в&nbsp;пути.</p>
+    </div>
+
+    <div class="ptable" role="table" aria-label="Тарифы" data-reveal>
+      <div class="ptable__row ptable__row--head" role="row">
+        <span role="columnheader">Автомобиль</span>
+        <span role="columnheader">Минута</span>
+        <span role="columnheader">Ожидание</span>
+        <span role="columnheader">1 час</span>
+        <span role="columnheader">3 часа</span>
+        <span role="columnheader">Сутки</span>
+      </div>
+      <div data-ptable></div>
+    </div>
+
+    <ul class="services">
+      <li data-reveal><span class="label">Подача к&nbsp;адресу</span><b>990 ₽</b><p>Внутри ТТК за&nbsp;30&nbsp;минут, в&nbsp;пределах МКАД — за&nbsp;60.</p></li>
+      <li data-reveal style="--d:1"><span class="label">С&nbsp;водителем</span><b>2 900 ₽ / час</b><p>От&nbsp;трёх часов, заказ минимум за&nbsp;два часа до&nbsp;поездки.</p></li>
+      <li data-reveal style="--d:2"><span class="label">Встреча в&nbsp;аэропорту</span><b>2 500 ₽</b><p>Машина у&nbsp;терминала к&nbsp;прилёту, час ожидания включён.</p></li>
+      <li data-reveal style="--d:3"><span class="label">Детское кресло</span><b>0 ₽</b><p>Установим при&nbsp;подаче — отметьте возраст ребёнка в&nbsp;заказе.</p></li>
+    </ul>
+
+    <div class="calc" data-reveal>
+      <div class="calc__intro">
+        <h3 class="calc__title">Сколько выйдет поездка</h3>
+        <p class="calc__text">Сдвиньте ползунок — калькулятор сам выберет, что&nbsp;выгоднее: минуты, пакет или&nbsp;пакет с&nbsp;доплатой.</p>
+      </div>
+      <div class="calc__panel">
+        <div class="calc__classes" role="radiogroup" aria-label="Автомобиль" data-calc-classes></div>
+        <label class="calc__range">
+          <span class="calc__range-head"><span>Время в&nbsp;пути</span><b data-calc-time>45 мин</b></span>
+          <input type="range" min="10" max="1440" step="5" value="90" data-calc-input>
+        </label>
+        <div class="calc__result">
+          <div>
+            <span class="calc__label">Поминутно</span>
+            <strong class="calc__minutes" data-calc-minutes>0 ₽</strong>
+          </div>
+          <div>
+            <span class="calc__label" data-calc-best-label>Лучший вариант</span>
+            <strong class="calc__best" data-calc-best>0 ₽</strong>
+          </div>
+        </div>
+        <p class="calc__note" data-calc-note></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ЧТО ВКЛЮЧЕНО ============ -->
+  <section class="included">
+    <div class="wrap">
+      <div class="sec-head sec-head--row">
+        <div>
+          <p class="label" data-reveal>04&nbsp;&nbsp;/&nbsp;&nbsp;Что уже в&nbsp;цене</p>
+          <h2 class="sec-head__title split" data-reveal>
+            <span class="line"><span>Никаких</span></span>
+            <span class="line"><span>«а&nbsp;ещё доплатите»</span></span>
+          </h2>
+        </div>
+        <p class="sec-head__lead" data-reveal style="--d:2">Всё, что&nbsp;обычно прячут в&nbsp;мелкий шрифт, мы&nbsp;уже включили в&nbsp;минуту.</p>
+      </div>
+
+      <ul class="perks">
+        <li class="perk" data-reveal>
+          <span class="perk__num">01</span>
+          <h3 class="perk__title">Топливо АИ-98</h3>
+          <p class="perk__text">Заправляем сами и&nbsp;только 98-м. Если бак опустился ниже четверти — топливная карта в&nbsp;подлокотнике, а&nbsp;за&nbsp;заправку 20&nbsp;минут в&nbsp;подарок.</p>
+        </li>
+        <li class="perk" data-reveal style="--d:1">
+          <span class="perk__num">02</span>
+          <h3 class="perk__title">КАСКО без франшизы</h3>
+          <p class="perk__text">Каждая поездка застрахована полностью. Исключения — только опьянение за&nbsp;рулём и&nbsp;умышленный ущерб.</p>
+        </li>
+        <li class="perk" data-reveal style="--d:2">
+          <span class="perk__num">03</span>
+          <h3 class="perk__title">Парковки</h3>
+          <p class="perk__text">Платные городские парковки внутри зоны — бесплатно, включая центр и&nbsp;Садовое кольцо.</p>
+        </li>
+        <li class="perk" data-reveal>
+          <span class="perk__num">04</span>
+          <h3 class="perk__title">Чистота</h3>
+          <p class="perk__text">Мойка после каждой аренды, химчистка салона — раз в&nbsp;неделю. В&nbsp;машине вода и&nbsp;зарядки для&nbsp;любого телефона.</p>
+        </li>
+        <li class="perk" data-reveal style="--d:1">
+          <span class="perk__num">05</span>
+          <h3 class="perk__title">Поддержка 24/7</h3>
+          <p class="perk__text">Менеджер в&nbsp;чате отвечает в&nbsp;среднем за&nbsp;40&nbsp;секунд. Пробили колесо в&nbsp;три ночи — подадим другую машину.</p>
+        </li>
+        <li class="perk" data-reveal style="--d:2">
+          <span class="perk__num">06</span>
+          <h3 class="perk__title">Без залога</h3>
+          <p class="perk__text">Карту проверим на&nbsp;1&nbsp;₽ и&nbsp;сразу вернём. Никаких замороженных сумм на&nbsp;счёте.</p>
+        </li>
+      </ul>
+
+      <div class="reqs">
+        <p class="label" data-reveal>Кто может ездить</p>
+        <div class="req" data-reveal>
+          <strong class="req__big">23<small>года</small></strong>
+          <p>минимальный возраст водителя</p>
+        </div>
+        <div class="req" data-reveal style="--d:1">
+          <strong class="req__big">3<small>года</small></strong>
+          <p>водительского стажа без лишения прав</p>
+        </div>
+        <div class="req" data-reveal style="--d:2">
+          <strong class="req__big">10<small>мин</small></strong>
+          <p>на&nbsp;проверку паспорта и&nbsp;прав после регистрации</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ЗОНА ============ -->
+  <section class="zone wrap" id="zone">
+    <div class="zone__text">
+      <p class="label" data-reveal>05&nbsp;&nbsp;/&nbsp;&nbsp;Зона</p>
+      <h2 class="sec-head__title split" data-reveal>
+        <span class="line"><span>Вся Москва</span></span>
+        <span class="line"><span>и&nbsp;чуть дальше</span></span>
+      </h2>
+      <p class="zone__lead" data-reveal>Начать и&nbsp;завершить поездку можно в&nbsp;пределах МКАД и&nbsp;в&nbsp;34&nbsp;районах за&nbsp;ним. Ехать — куда угодно: на&nbsp;дачу, в&nbsp;Завидово, в&nbsp;Тверь. Просто вернитесь в&nbsp;зону, чтобы закончить аренду.</p>
+
+      <ul class="airports" data-reveal>
+        <li><span class="label">SVO</span><b>Шереметьево</b><em>+600 ₽</em></li>
+        <li><span class="label">VKO</span><b>Внуково</b><em>+600 ₽</em></li>
+        <li><span class="label">DME</span><b>Домодедово</b><em>+800 ₽</em></li>
+      </ul>
+    </div>
+
+    <div class="zone__map" data-reveal>
+      <svg class="map" viewBox="0 0 600 600" role="img" aria-label="Схема зоны завершения аренды">
+        <g class="map__grid"><path d="M0 100H600M0 200H600M0 300H600M0 400H600M0 500H600M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600"/></g>
+        <path class="map__zone map__zone--extra" d="M118 128 C96 96 112 62 150 58 C182 56 196 82 190 104 Z"/>
+        <path class="map__zone map__zone--extra" d="M262 538 C252 572 282 596 318 590 C352 584 360 556 346 536 Z"/>
+        <path class="map__zone map__zone--extra" d="M528 268 C562 254 590 276 586 310 C582 342 556 352 534 340 Z"/>
+        <path class="map__zone map__mkad" d="M300 62 C392 60 470 104 512 178 C548 240 548 330 520 400 C486 478 404 536 306 540 C214 544 128 500 88 420 C54 350 52 262 84 190 C120 112 208 64 300 62 Z"/>
+        <path class="map__ring" d="M300 190 C356 188 404 222 414 276 C424 334 392 392 332 408 C270 424 206 396 190 338 C176 282 220 192 300 190 Z"/>
+        <ellipse class="map__ring" cx="302" cy="298" rx="62" ry="58"/>
+        <path class="map__river" d="M20 236 C100 226 140 330 214 322 C278 314 256 252 318 252 C384 252 356 344 424 352 C486 360 506 300 580 330"/>
+        <path class="map__route" d="M196 96 L196 28"/>
+        <path class="map__route" d="M120 448 L64 520"/>
+        <path class="map__route" d="M430 498 L482 562"/>
+        <g class="map__airport" transform="translate(196 22)"><rect x="-5" y="-5" width="10" height="10"/><text x="14" y="4">SVO</text></g>
+        <g class="map__airport" transform="translate(58 528)"><rect x="-5" y="-5" width="10" height="10"/><text x="14" y="4">VKO</text></g>
+        <g class="map__airport" transform="translate(488 568)"><rect x="-5" y="-5" width="10" height="10"/><text x="-44" y="4">DME</text></g>
+        <g data-map-dots></g>
+      </svg>
+      <ul class="map__legend">
+        <li><i class="lg lg--zone"></i>Зона завершения</li>
+        <li><i class="lg lg--dot"></i>Свободные машины</li>
+        <li><i class="lg lg--air"></i>Аэропорты</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq wrap" id="faq">
+    <div class="faq__head">
+      <p class="label" data-reveal>06&nbsp;&nbsp;/&nbsp;&nbsp;Вопросы</p>
+      <h2 class="sec-head__title" data-reveal>Что спрашивают чаще всего</h2>
+      <p class="faq__contact" data-reveal>Не&nbsp;нашли ответ? Напишите в&nbsp;чат приложения — отвечаем круглосуточно.</p>
+    </div>
+    <div class="acc" data-acc>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Нужен ли залог?<i></i></button>
+        <div class="acc__panel"><div><p>Нет. При&nbsp;первой поездке мы&nbsp;проверяем карту, списывая 1&nbsp;₽, и&nbsp;сразу его возвращаем. Оплата списывается после завершения поездки.</p></div></div>
+      </div>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Можно выезжать за&nbsp;город?<i></i></button>
+        <div class="acc__panel"><div><p>Да, ограничений по&nbsp;направлению нет. Завершить аренду можно только в&nbsp;зоне, поэтому для&nbsp;поездок на&nbsp;выходные удобнее пакет «Сутки» — в&nbsp;него входит 300&nbsp;км, дальше 25&nbsp;₽ за&nbsp;километр.</p></div></div>
+      </div>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Можно заказать машину с&nbsp;водителем?<i></i></button>
+        <div class="acc__panel"><div><p>Да, от&nbsp;трёх часов по&nbsp;2&nbsp;900&nbsp;₽ в&nbsp;час. Водитель приедет на&nbsp;выбранной машине к&nbsp;вашему адресу. Закажите в&nbsp;приложении минимум за&nbsp;два часа.</p></div></div>
+      </div>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Что делать при&nbsp;ДТП?<i></i></button>
+        <div class="acc__panel"><div><p>Включите аварийку, выставьте знак и&nbsp;нажмите «ДТП» в&nbsp;приложении — менеджер свяжется с&nbsp;вами и&nbsp;подскажет, как&nbsp;оформить. Пока ждёте ГИБДД или&nbsp;комиссара, минуты не&nbsp;списываются.</p></div></div>
+      </div>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Кто платит штрафы с&nbsp;камер?<i></i></button>
+        <div class="acc__panel"><div><p>Водитель, который был за&nbsp;рулём. Постановление придёт в&nbsp;приложение, оплатить можно там&nbsp;же — в&nbsp;первые 20&nbsp;дней со&nbsp;скидкой 50%. Комиссии за&nbsp;пересылку нет.</p></div></div>
+      </div>
+      <div class="acc__item" data-reveal>
+        <button class="acc__btn" aria-expanded="false">Можно с&nbsp;собакой?<i></i></button>
+        <div class="acc__panel"><div><p>Да, если питомец едет в&nbsp;переноске или&nbsp;на&nbsp;защитном чехле. Курить в&nbsp;машинах нельзя — штраф 15&nbsp;000&nbsp;₽ и&nbsp;блокировка аккаунта при&nbsp;повторе.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="app" id="app">
+    <div class="app__bg" aria-hidden="true"><img src="assets/img/s-class.jpg" alt="" loading="lazy" data-parallax></div>
+    <div class="wrap app__inner">
+      <p class="label" data-reveal>07&nbsp;&nbsp;/&nbsp;&nbsp;Начать</p>
+      <h2 class="app__title split" data-reveal>
+        <span class="line"><span>Первые 30&nbsp;минут —</span></span>
+        <span class="line"><span>за&nbsp;наш счёт</span></span>
+      </h2>
+      <div class="app__row" data-reveal style="--d:2">
+        <button class="promo" data-promo type="button">
+          <span class="label">Промокод</span>
+          <span class="promo__code">ХОД30</span>
+          <span class="promo__copy" data-promo-status>Скопировать</span>
+        </button>
+        <div class="stores">
+          <a class="btn btn--light" href="#app"><span>App Store</span></a>
+          <a class="btn btn--line" href="#app"><span>Google Play</span></a>
+          <a class="btn btn--line" href="#app"><span>RuStore</span></a>
+        </div>
+      </div>
+      <p class="app__fine" data-reveal style="--d:3">Промокод действует на&nbsp;первую поездку после регистрации на&nbsp;любом автомобиле парка.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__cols">
+      <div>
+        <p class="label footer__h">Сервис</p>
+        <a href="#fleet">Автопарк</a>
+        <a href="#how">Как это работает</a>
+        <a href="#prices">Тарифы</a>
+        <a href="#zone">Зона</a>
+      </div>
+      <div>
+        <p class="label footer__h">Документы</p>
+        <a href="#">Договор аренды</a>
+        <a href="#">Правила пользования</a>
+        <a href="#">Политика конфиденциальности</a>
+      </div>
+      <div>
+        <p class="label footer__h">Связь</p>
+        <a href="tel:+70000000000">+7 (000) 000-00-00</a>
+        <a href="#">Чат в приложении</a>
+        <a href="#">Для бизнеса</a>
+      </div>
+      <p class="footer__note">Машины моют, заправляют и&nbsp;обслуживают люди, которые сами на&nbsp;них ездят.</p>
+    </div>
+    <div class="footer__word" aria-hidden="true" data-footer-word><span>Х</span><span>О</span><span>Д</span></div>
+    <div class="footer__bottom">
+      <span>© <span data-year>2026</span> ХОД</span>
+      <span>Москва</span>
+      <a href="#top">Наверх</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
