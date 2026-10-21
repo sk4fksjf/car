@@ -15,9 +15,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/s-class.jpg">
   <link rel="stylesheet" href="css/style.css">
-  <script>document.documentElement.classList.add('js')</script>
+  <script>
+    (function (d) {
+      var c = d.documentElement.classList; c.add('js');
+      var seen = false; try { seen = sessionStorage.getItem('hod-intro') === '1'; } catch (e) {}
+      if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) c.add('no-intro'); else c.add('intro-play');
+      // страховка: если основной скрипт не запустился, контент всё равно покажется
+      setTimeout(function () { if (!window.__hodReady) c.remove('js'); }, 4000);
+    })(document);
+  </script>
 </head>
 <body>
+
+<!-- вступление: один раз за визит, чистый CSS — не зависит от скриптов -->
+<div class="intro" aria-hidden="true" data-intro>
+  <div class="intro__half intro__half--top"></div>
+  <div class="intro__half intro__half--bottom"></div>
+  <div class="intro__mark"><span>Х</span><span>О</span><span>Д</span></div>
+  <div class="intro__line"></div>
+</div>
 
 <div class="progress" aria-hidden="true"><span data-progress></span></div>
 
@@ -44,6 +60,9 @@
       <!-- ролик 0: S-Class уезжает, приезжает BMW; ролик 1 — наоборот -->
       <video class="hero__video is-active" data-clip="0" src="assets/video/s-class-to-bmw7.mp4" poster="assets/img/s-class.jpg" muted playsinline preload="auto" disablepictureinpicture></video>
       <video class="hero__video" data-clip="1" src="assets/video/bmw7-to-s-class.mp4" poster="assets/img/bmw7.jpg" muted playsinline preload="auto" disablepictureinpicture></video>
+      <!-- фото текущей машины поверх видео: видно сразу, даже пока видео грузится -->
+      <img class="hero__still is-on" data-still="0" src="assets/img/s-class.jpg" alt="Mercedes-Benz S-Class в студии" fetchpriority="high">
+      <img class="hero__still" data-still="1" src="assets/img/bmw7.jpg" alt="BMW 7 Series в студии">
       <div class="hero__shade" aria-hidden="true"></div>
     </div>
 
@@ -57,15 +76,20 @@
       </div>
 
       <div class="hero__bottom" data-reveal style="--d:3">
-        <div class="hero__car">
-          <p class="label hero__count"><span data-count>01</span>&nbsp;/&nbsp;<span data-total>02</span></p>
-          <div class="hero__info" data-carinfo>
-            <p class="hero__model"><span data-car-model>Mercedes-Benz S-Class</span> <em data-car-version>S 450 4MATIC Long</em></p>
-            <p class="hero__spec" data-car-spec>3.0 л · 367 л.с. · 0–100 км/ч за 5,1 с</p>
-          </div>
+        <div class="hero__name">
+          <p class="label hero__meta">
+            <span class="hero__count"><span data-count>01</span>&nbsp;/&nbsp;<span data-total>02</span></span>
+            <span class="hero__sep" aria-hidden="true"></span>
+            <span data-car-sub>Mercedes-Benz · S 450 4MATIC Long</span>
+          </p>
+          <p class="hero__model" data-car-name>S-Class</p>
         </div>
-        <div class="hero__ctrl">
-          <p class="hero__price" data-carprice><span data-car-price>49</span>&nbsp;₽<small>/ минута</small></p>
+        <div class="hero__side">
+          <dl class="hero__specs">
+            <div><dt>Мощность</dt><dd><span data-car-power>367</span><small>л.с.</small></dd></div>
+            <div><dt>0–100 км/ч</dt><dd><span data-car-accel>5,1</span><small>с</small></dd></div>
+            <div><dt>Минута</dt><dd><span data-car-price>49</span><small>₽</small></dd></div>
+          </dl>
           <button class="next" data-next aria-label="Следующий автомобиль">
             <svg class="next__ring" viewBox="0 0 100 100" aria-hidden="true">
               <circle class="next__track" cx="50" cy="50" r="49"/>
@@ -79,6 +103,7 @@
         </div>
       </div>
     </div>
+
   </section>
 
   <!-- ============ МАНИФЕСТ ============ -->
@@ -529,7 +554,7 @@
   </div>
 </footer>
 
-<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" async onload="window.__onLenis && window.__onLenis()"></script>
 <script src="js/main.js" defer></script>
 </body>
 </html>

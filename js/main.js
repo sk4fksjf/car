@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  window.__hodReady = true;
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
@@ -18,13 +19,13 @@
      ========================================================= */
   const CARS = [
     {
-      model: 'Mercedes-Benz S-Class', version: 'S 450 4MATIC Long', short: 'S-Class',
-      spec: '3.0 л · 367 л.с. · 0–100 км/ч за 5,1 с',
+      brand: 'Mercedes-Benz', name: 'S-Class', version: 'S 450 4MATIC Long', short: 'S-Class',
+      power: '367', accel: '5,1',
       tariff: { min: 49, wait: 12, h1: 2690, h3: 6990, d1: 15900 },
     },
     {
-      model: 'BMW 7 Series', version: '740Li xDrive', short: '7 Series',
-      spec: '3.0 л · 380 л.с. · 0–100 км/ч за 5,4 с',
+      brand: 'BMW', name: '7 Series', version: '740Li xDrive', short: '7 Series',
+      power: '380', accel: '5,4',
       tariff: { min: 44, wait: 10, h1: 2390, h3: 6290, d1: 14500 },
     },
   ];
@@ -43,9 +44,12 @@
      Плавный скролл (Lenis), если библиотека загрузилась
      ========================================================= */
   let lenis = null;
-  if (window.Lenis && !reduced) {
+  const initLenis = () => {
+    if (lenis || reduced || !window.Lenis) return;
     lenis = new window.Lenis({ lerp: 0.085, wheelMultiplier: 0.9 });
-  }
+  };
+  if (window.Lenis) initLenis();
+  else window.__onLenis = initLenis;
   $$('a[href^="#"]').forEach((a) =>
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href');
@@ -61,14 +65,20 @@
   );
 
   /* =========================================================
-     HERO: по стрелке машина уезжает, приезжает следующая
+     HERO: по стрелке (или клику по кадру) машина уезжает,
+     приезжает следующая
      ========================================================= */
+  const hero = $('[data-hero]');
+  const media = $('[data-hero-media]');
   const btnNext = $('[data-next]');
   const ring = $('[data-ring]');
   const RING_LEN = 308;
-  const modelEl = $('.hero__model');
+  const subEl = $('[data-car-sub]');
+  const nameEl = $('[data-car-name]');
+  const stills = $$('[data-still]');
   let cur = 0;
   let busy = false;
+  let stillOn = 0; // какое фото сейчас лежит поверх видео (null — видно само видео)
 
   $('[data-total]').textContent = pad(CARS.length);
 
@@ -91,14 +101,14 @@
       const old = prev[prev.length - (text.length - i)];
       const from = /\d/.test(old) ? +old : +ch;
       const to = +ch >= from ? +ch : +ch + 10;
-      strips.push({ from, to, i });
+      strips.push({ from, to });
       return `<span class="odo__col" aria-hidden="true"><span class="odo__strip" style="transform:translateY(${-from * 5}%)">${STRIP}</span></span>`;
     }).join('');
+    const els = $$('.odo__strip', el);
     if (!animate || reduced) {
-      $$('.odo__strip', el).forEach((s, k) => (s.style.transform = `translateY(${-(strips[k].to % 10) * 5}%)`));
+      els.forEach((s, k) => (s.style.transform = `translateY(${-(strips[k].to % 10) * 5}%)`));
       return;
     }
-    const els = $$('.odo__strip', el);
     requestAnimationFrame(() => requestAnimationFrame(() => {
       els.forEach((s, k) => {
         const { from, to } = strips[k];
@@ -110,45 +120,71 @@
       });
     }));
   }
-  const odoSpec = $('[data-car-spec]');
-  const odoPrice = $('[data-car-price]');
-  const odoCount = $('[data-count]');
-  [odoSpec, odoPrice, odoCount].forEach((el) => odo(el, el.textContent, false));
+  const odoEls = ['[data-car-power]', '[data-car-accel]', '[data-car-price]', '[data-count]'].map((s) => $(s));
+  odoEls.forEach((el) => odo(el, el.textContent, false));
+
+  /* Огромное название: буквы уезжают вверх, новые выезжают снизу */
+  const letters = (text) => [...text].map((ch, i) =>
+    `<span class="nm__c" style="--i:${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
+  function nameOut() {
+    if (reduced) return;
+    $('.nm', nameEl)?.classList.add('is-out');
+  }
+  function nameIn(text) {
+    nameEl.setAttribute('aria-label', text);
+    nameEl.innerHTML = `<span class="nm${reduced ? '' : ' is-pre'}" aria-hidden="true">${letters(text)}</span>`;
+    if (reduced) return;
+    const nm = $('.nm', nameEl);
+    nm.getBoundingClientRect(); // фиксируем стартовое положение букв
+    requestAnimationFrame(() => nm.classList.remove('is-pre'));
+  }
+  nameEl.setAttribute('aria-label', nameEl.textContent);
+  nameEl.innerHTML = `<span class="nm" aria-hidden="true">${letters(nameEl.textContent)}</span>`;
+
+  const fade = (el, out) =>
+    el.animate(
+      out
+        ? [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-8px)' }]
+        : [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+      { duration: out ? 500 : 900, easing: 'cubic-bezier(.2,.75,.15,1)', fill: 'forwards' }
+    );
 
   function renderInfo(i) {
     const c = CARS[i];
-    $('[data-car-model]').textContent = c.model;
-    $('[data-car-version]').textContent = c.version;
-    odo(odoSpec, c.spec);
-    odo(odoPrice, String(c.tariff.min));
-    odo(odoCount, pad(i + 1));
+    subEl.textContent = `${c.brand} · ${c.version}`;
+    fade(subEl, false);
+    nameIn(c.name);
+    odo(odoEls[0], c.power);
+    odo(odoEls[1], c.accel);
+    odo(odoEls[2], String(c.tariff.min));
+    odo(odoEls[3], pad(i + 1));
   }
 
-  const fade = (els, out) =>
-    els.forEach((el, k) =>
-      el.animate(
-        out
-          ? [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }]
-          : [{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
-        { duration: out ? 600 : 1000, delay: k * 90, easing: 'cubic-bezier(.2,.75,.15,1)', fill: 'forwards' }
-      )
-    );
+  /* Фото поверх видео */
+  function showStill(i, dur = 450) {
+    const s = stills[i];
+    stillOn = i;
+    s.classList.add('is-on');
+    s.animate([{ opacity: 0 }, { opacity: 1 }], { duration: dur, easing: 'ease-out' });
+    stills.forEach((o) => o !== s && o.classList.remove('is-on'));
+  }
+  function hideStill() {
+    if (stillOn === null) return;
+    const s = stills[stillOn];
+    stillOn = null;
+    s.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320, easing: 'ease-in' })
+      .finished.then(() => stillOn === null && s.classList.remove('is-on'));
+  }
 
-  // готовим ролик: ставим на кадр, где машина ещё стоит
+  // ставим скрытый ролик на кадр, где машина ещё стоит
   function cue(clip) {
-    return new Promise((resolve) => {
-      const v = clip.el;
-      const seek = () => {
-        if (Math.abs(v.currentTime - clip.from) < 0.05) return resolve();
-        v.addEventListener('seeked', resolve, { once: true });
-        v.currentTime = clip.from;
-      };
-      if (v.readyState >= 1) seek();
-      else v.addEventListener('loadedmetadata', seek, { once: true });
-      setTimeout(resolve, 2500);
-    });
+    const v = clip.el;
+    const seek = () => { if (Math.abs(v.currentTime - clip.from) > 0.05) v.currentTime = clip.from; };
+    if (v.readyState >= 1) seek();
+    else v.addEventListener('loadedmetadata', seek, { once: true });
   }
-  CLIPS.forEach(cue);
+  // видимый ролик на старте не трогаем: пусть браузер спокойно грузит его
+  CLIPS.slice(1).forEach(cue);
 
   // Запускать ролики может только сайт. Chrome сам ставит видео на паузу
   // в скрытой вкладке и сам же запускает при возвращении — такие запуски гасим.
@@ -162,15 +198,24 @@
       const v = clip.el;
       let swapped = false;
       let done = false;
+      let lastT = v.currentTime;
+      let lastMove = performance.now();
+      const swap = () => {
+        if (swapped) return;
+        swapped = true;
+        renderInfo(nextIndex);
+      };
       const check = () => {
         if (done) return;
         const t = v.currentTime;
-        setRing((t - clip.from) / (clip.to - clip.from));
-        if (!swapped && t >= clip.swap) {
-          swapped = true;
-          renderInfo(nextIndex);
-          fade([modelEl]);
+        if (t > lastT + 0.004) {
+          lastT = t;
+          lastMove = performance.now();
+          // ролик реально поехал — фото больше не нужно
+          if (stillOn !== null && t > clip.from + 0.04) hideStill();
         }
+        setRing((t - clip.from) / (clip.to - clip.from));
+        if (t >= clip.swap) swap();
         if (t >= clip.to || v.ended) return finish();
         // последние ~1.1 с замедляемся, чтобы пауза наступила мягко, а не обрывом
         const k = clamp((t - (clip.to - 1.1)) / 1.1);
@@ -181,48 +226,63 @@
         check();
         if (!done) requestAnimationFrame(loop);
       };
-      const finish = () => {
-        if (done) return;
+      const stop = () => {
         done = true;
         playingEl = null;
         v.pause();
         v.removeEventListener('timeupdate', check);
-        v.removeEventListener('error', finish);
+        v.removeEventListener('error', bail);
         clearInterval(watchdog);
-        clearTimeout(fallback);
-        if (!swapped) { renderInfo(nextIndex); fade([modelEl]); }
+      };
+      const finish = () => {
+        if (done) return;
+        stop();
+        swap();
         resolve();
       };
-      // timeupdate — подстраховка для фоновой вкладки, где rAF засыпает
+      // Ролик не идёт: браузер не дал его запустить, поставил на паузу
+      // (экономия батареи, режим энергосбережения) или видео не загрузилось.
+      // Не зависаем — мягко показываем фото следующей машины.
+      function bail() {
+        if (done) return;
+        stop();
+        swap();
+        showStill(nextIndex, 700);
+        setRing(1);
+        resolve();
+      }
       v.addEventListener('timeupdate', check);
-      v.addEventListener('error', finish);
-      // браузер приостановил ролик в фоне — на видимой вкладке доигрываем
+      v.addEventListener('error', bail);
       const watchdog = setInterval(() => {
-        if (!done && v.paused && document.visibilityState === 'visible') v.play().catch(() => {});
-      }, 700);
-      // крайний случай: видео так и не смогло доиграть
-      const fallback = setTimeout(finish, 30000);
+        if (done) return;
+        // в скрытой вкладке не считаем простой — браузер просто спит
+        if (document.visibilityState !== 'visible') { lastMove = performance.now(); return; }
+        if (v.paused) v.play().catch(() => {});
+        if (performance.now() - lastMove > 1400) bail();
+      }, 250);
       playingEl = v;
       v.playbackRate = RATE;
-      v.play().catch(() => {});
+      const p = v.play();
+      if (p) p.catch((e) => { if (e && e.name === 'NotAllowedError') bail(); });
       requestAnimationFrame(loop);
     });
   }
 
-  // где внутри <video> лежит сам кадр (object-fit: cover + object-position)
+  // где внутри <video>/<img> лежит сам кадр (object-fit: cover + object-position)
   function frameBox(v) {
     const bw = v.clientWidth, bh = v.clientHeight;
-    const vw = v.videoWidth || 1920, vh = v.videoHeight || 1080;
+    const vw = v.videoWidth || v.naturalWidth || 1920, vh = v.videoHeight || v.naturalHeight || 1080;
     const k = Math.max(bw / vw, bh / vh);
     const W = vw * k, H = vh * k;
     const [px, py] = getComputedStyle(v).objectPosition.split(' ').map((s) => parseFloat(s) / 100);
     return { W, H, ox: (bw - W) * px, oy: (bh - H) * py };
   }
 
-  // у обоих роликов одна точка масштабирования — центр кадра,
+  // у роликов и фото одна точка масштабирования — центр кадра,
   // тогда запас scale: 1.03 одинаков и кадры остаются совмещёнными
+  const layers = [...CLIPS.map((c) => c.el), ...stills];
   function setOrigins() {
-    CLIPS.forEach(({ el }) => {
+    layers.forEach((el) => {
       const { W, H, ox, oy } = frameBox(el);
       el.style.transformOrigin = `${(ox + W / 2).toFixed(1)}px ${(oy + H / 2).toFixed(1)}px`;
     });
@@ -231,12 +291,12 @@
   addEventListener('resize', setOrigins);
   setOrigins();
 
-  // показываем ролик, поставленный на стартовый кадр.
-  // seam — склейка с предыдущим: подгоняем кадр под него и коротко растворяем
-  async function show(clip, seam) {
-    if (clip.el.classList.contains('is-active')) return;
-    await cue(clip);
+  // делаем ролик видимым — синхронно, чтобы запуск видео остался внутри клика.
+  // seam — склейка с предыдущим роликом: подгоняем кадр под него и коротко растворяем
+  function show(clip, seam) {
     const v = clip.el;
+    if (Math.abs(v.currentTime - clip.from) > 0.05) v.currentTime = clip.from;
+    if (v.classList.contains('is-active')) return;
     const others = CLIPS.filter((c) => c !== clip);
     if (seam) {
       setOrigins();
@@ -257,7 +317,7 @@
     }, seam ? SEAM_FADE + 60 : 40);
   }
 
-  async function next() {
+  function next() {
     if (busy) return;
     busy = true;
     btnNext.classList.add('is-busy');
@@ -267,47 +327,62 @@
     const clip = CLIPS[cur];
     const following = CLIPS[nextIndex];
 
-    fade([modelEl], true);
+    fade(subEl, true);
+    nameOut();
 
+    let run;
     if (reduced) {
       renderInfo(nextIndex);
-      fade([modelEl]);
-      await show(following, false);
+      showStill(nextIndex, 300);
+      run = Promise.resolve();
     } else {
-      // на экране стоит на паузе предыдущий ролик с этой же машиной —
-      // подставляем нужный, подогнав его кадр, и сразу запускаем
-      await show(clip, true);
-      await play(clip, nextIndex);
-      // машина остановилась — ролик просто стоит на паузе на последнем кадре,
-      // а следующий заранее готовим в фоне
-      cue(following);
+      // если поверх лежит фото этой же машины — оно и есть стартовый кадр,
+      // склейка не нужна; иначе подгоняем ролик под кадр на паузе
+      show(clip, stillOn === null);
+      run = play(clip, nextIndex);
     }
 
-    ring.classList.add('is-reset');
-    setRing(0);
-
-    cur = nextIndex;
-    busy = false;
-    btnNext.classList.remove('is-busy');
+    run.then(() => {
+      // машина остановилась — ролик стоит на паузе на последнем кадре,
+      // а следующий заранее ставим на старт
+      cue(following);
+      ring.classList.add('is-reset');
+      setRing(0);
+      cur = nextIndex;
+      busy = false;
+      btnNext.classList.remove('is-busy');
+    });
   }
 
   btnNext.addEventListener('click', next);
 
-  const hero = $('[data-hero]');
   let heroVisible = true;
   new IntersectionObserver(([e]) => (heroVisible = e.isIntersecting)).observe(hero);
   addEventListener('keydown', (e) => {
     if (heroVisible && e.key === 'ArrowRight' && !e.target.closest('input, textarea')) next();
   });
 
-  // свайп влево по кадру
-  const media = $('[data-hero-media]');
+  // на телефоне можно смахнуть кадр влево — следующая машина
   let sx = null;
-  media.addEventListener('pointerdown', (e) => (sx = e.clientX));
+  media.addEventListener('pointerdown', (e) => (sx = e.pointerType === 'mouse' ? null : e.clientX));
   media.addEventListener('pointerup', (e) => {
     if (sx !== null && sx - e.clientX > 50) next();
     sx = null;
   });
+
+  /* =========================================================
+     Вступление: отметить, что уже показали, и убрать слой
+     ========================================================= */
+  const intro = $('[data-intro]');
+  const html = document.documentElement;
+  if (html.classList.contains('intro-play') && intro) {
+    try { sessionStorage.setItem('hod-intro', '1'); } catch (e) { /* приватный режим */ }
+    const skip = () => { html.classList.add('intro-skip'); intro.remove(); };
+    intro.addEventListener('click', skip);
+    setTimeout(() => intro.isConnected && intro.remove(), 3400);
+  } else {
+    intro?.remove();
+  }
 
   /* =========================================================
      Манифест: слова проявляются по мере скролла
@@ -496,7 +571,7 @@
   const expandFrame = $('[data-expand-frame]');
   const expandText = $('[data-expand-text]');
   const parallaxImgs = $$('[data-parallax]');
-  const mobile = matchMedia('(max-width: 760px)');
+  const mobile = matchMedia('(max-width: 760px), (max-aspect-ratio: 5/4)'); // как в CSS: первый экран «стопкой»
 
   let lastY = scrollY;
   let hideAcc = 0;
