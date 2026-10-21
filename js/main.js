@@ -49,6 +49,7 @@
   $$('a[href^="#"]').forEach((a) =>
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href');
+      if (id.length < 2) return e.preventDefault(); // ссылка-заглушка
       const target = id === '#top' ? 0 : $(id);
       if (target === null) return;
       e.preventDefault();
@@ -435,16 +436,55 @@
 
   const steps = $$('[data-step]');
   const screens = $$('[data-screen]');
+  const stepsList = $('.steps');
+  const dotsBox = $('[data-how-dots]');
+  const howMobile = matchMedia('(max-width: 900px)');
+  let stepNow = 0;
+
+  dotsBox.innerHTML = steps.map((_, i) =>
+    `<button type="button" class="how__dot${i ? '' : ' is-active'}" role="tab" aria-label="Шаг ${i + 1}" aria-selected="${!i}"></button>`
+  ).join('');
+  const stepDots = $$('.how__dot', dotsBox);
+
+  function setStep(i) {
+    if (i === stepNow) return;
+    stepNow = i;
+    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    screens.forEach((s) => s.classList.toggle('is-active', +s.dataset.screen === i));
+    stepDots.forEach((d, k) => {
+      d.classList.toggle('is-active', k === i);
+      d.setAttribute('aria-selected', k === i);
+    });
+  }
+
+  // компьютер: шаг меняется, когда его текст доходит до середины экрана
   const stepIO = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      const i = +e.target.dataset.step;
-      steps.forEach((s) => s.classList.toggle('is-active', s === e.target));
-      screens.forEach((s) => s.classList.toggle('is-active', +s.dataset.screen === i));
+      if (e.isIntersecting && !howMobile.matches) setStep(+e.target.dataset.step);
     }),
     { rootMargin: '-45% 0px -45% 0px' }
   );
   steps.forEach((s) => stepIO.observe(s));
+
+  // телефон: шаги листаются свайпом, экран телефона меняется вслед
+  const stepOffset = (i) => steps[i].offsetLeft - steps[0].offsetLeft;
+  stepsList.addEventListener('scroll', () => {
+    if (!howMobile.matches) return;
+    const x = stepsList.scrollLeft;
+    let best = 0;
+    steps.forEach((_, k) => {
+      if (Math.abs(stepOffset(k) - x) < Math.abs(stepOffset(best) - x)) best = k;
+    });
+    setStep(best);
+  }, { passive: true });
+  stepDots.forEach((d, i) => d.addEventListener('click', () => {
+    stepsList.scrollTo({ left: stepOffset(i), behavior: reduced ? 'auto' : 'smooth' });
+    setStep(i);
+  }));
+  // тап по шагу тоже переключает экран
+  steps.forEach((s, i) => s.addEventListener('click', () => {
+    if (howMobile.matches) stepDots[i].click();
+  }));
 
   /* =========================================================
      Покадровые эффекты

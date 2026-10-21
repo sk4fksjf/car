@@ -350,6 +350,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   opacity: .22; transition: opacity .8s var(--ease);
 }
 .step:first-child { border-top: 0; }
+.how__dots { display: none; }
 .step.is-active { opacity: 1; }
 .step__num { font-size: 12px; font-weight: 500; letter-spacing: .2em; color: var(--mute); margin-bottom: 24px; }
 .step__title { font-size: clamp(30px, 3.4vw, 52px); font-weight: 200; line-height: 1.05; letter-spacing: -.04em; margin-bottom: 22px; }
@@ -561,9 +562,30 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .stats { grid-template-columns: 1fr 1fr; row-gap: 48px; }
   .stat:nth-child(3) { border-left: 0; padding-left: 0; }
 
-  .how__grid { grid-template-columns: 1fr; }
-  .how__phone-col { display: none; }
-  .step { min-height: 0; padding-block: 44px; opacity: 1; }
+  /* телефон уменьшен и стоит над шагами, шаги листаются свайпом */
+  .how__grid { grid-template-columns: 1fr; gap: 0; }
+  .how .sec-head { margin-bottom: 40px; }
+  .phone { position: relative; top: auto; zoom: .72; }
+  .how__dots { display: flex; justify-content: center; gap: 10px; margin: 26px 0 8px; }
+  .how__dot { width: 28px; height: 28px; display: grid; place-items: center; }
+  .how__dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); transition: width .5s var(--ease), background .4s, border-radius .5s; }
+  .how__dot.is-active::before { width: 22px; border-radius: 3px; background: var(--fg); }
+  .steps {
+    display: flex; gap: 14px;
+    margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+    scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .steps::-webkit-scrollbar { display: none; }
+  .step, .step:first-child {
+    flex: 0 0 86%; min-height: 0; justify-content: flex-start;
+    padding: 26px 22px 30px; border: 1px solid var(--line); border-radius: 4px;
+    scroll-snap-align: start; opacity: .45;
+  }
+  .step.is-active { opacity: 1; border-color: var(--line-2); }
+  .step__num { margin-bottom: 16px; }
+  .step__title { font-size: 26px; margin-bottom: 14px; }
+  .step__text { font-size: 15px; }
 
   .ptable__row--head { display: none; }
   .ptable__row { grid-template-columns: 1fr 1fr; gap: 12px 24px; }
