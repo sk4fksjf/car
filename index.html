@@ -35,6 +35,34 @@
   <div class="intro__line"></div>
 </div>
 
+<!-- градиенты для света фар в автопарке -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="hl-glow">
+      <stop offset="0" stop-color="#fff" stop-opacity=".95"/>
+      <stop offset=".16" stop-color="#e6eeff" stop-opacity=".6"/>
+      <stop offset=".45" stop-color="#cdd9f0" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#cdd9f0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hl-flare">
+      <stop offset="0" stop-color="#dfe8ff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#dfe8ff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="tl-glow">
+      <stop offset="0" stop-color="#ff5a4a" stop-opacity=".95"/>
+      <stop offset=".22" stop-color="#ff2418" stop-opacity=".55"/>
+      <stop offset=".55" stop-color="#c80f0a" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#c80f0a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hl-flare-soft">
+      <stop offset="0" stop-color="#cfdcff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#cfdcff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#cfdcff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
 <div class="progress" aria-hidden="true"><span data-progress></span></div>
 
 <header class="header" data-header>
@@ -137,7 +165,7 @@
   <section class="expand" data-expand aria-label="Автопарк">
     <div class="expand__sticky">
       <div class="expand__frame" data-expand-frame>
-        <img src="assets/img/bmw7.jpg" alt="BMW 7 Series в студии, вид сбоку" data-expand-img>
+        <img src="assets/img/fleet-duo.jpg" alt="Mercedes-Benz S-Class и BMW 7 Series спереди в тёмной студии" data-expand-img>
         <div class="expand__shade"></div>
       </div>
       <div class="expand__text wrap" data-expand-text>
@@ -150,10 +178,24 @@
   <!-- ============ АВТОПАРК ============ -->
   <section class="fleet wrap" id="fleet">
     <article class="car">
-      <div class="car__media" data-reveal="clip">
+      <div class="car__media car__media--front" data-reveal="clip" data-ignite>
         <div class="car__clip">
           <div class="car__layers" data-parallax>
-            <img src="assets/img/s-class.jpg" alt="Mercedes-Benz S-Class в студии, вид сбоку" loading="lazy">
+            <img src="assets/img/s-class-front.jpg" alt="Mercedes-Benz S-Class спереди с включёнными фарами в тёмной студии" loading="lazy">
+            <!-- свет фар: координаты в пикселях исходного фото 2000×1116 -->
+            <svg class="car__lights" viewBox="0 0 2000 1116" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g class="car__glow">
+                <ellipse cx="751" cy="598" rx="170" ry="96" fill="url(#hl-glow)"/>
+                <ellipse cx="1250" cy="602" rx="170" ry="96" fill="url(#hl-glow)"/>
+              </g>
+              <g class="car__flare">
+                <rect x="151" y="588" width="1200" height="20" fill="url(#hl-flare-soft)"/>
+                <rect x="151" y="596" width="1200" height="4" fill="url(#hl-flare)"/>
+                <rect x="650" y="592" width="1200" height="20" fill="url(#hl-flare-soft)"/>
+                <rect x="650" y="600" width="1200" height="4" fill="url(#hl-flare)"/>
+              </g>
+            </svg>
+            <span class="car__sweep" aria-hidden="true"></span>
           </div>
         </div>
       </div>
@@ -172,10 +214,24 @@
     </article>
 
     <article class="car car--flip">
-      <div class="car__media" data-reveal="clip">
+      <div class="car__media car__media--front" data-reveal="clip" data-ignite>
         <div class="car__clip">
           <div class="car__layers" data-parallax>
-            <img src="assets/img/bmw7.jpg" alt="BMW 7 Series в студии, вид сбоку" loading="lazy">
+            <img src="assets/img/bmw7-front.jpg" alt="BMW 7 Series спереди с включёнными фарами в тёмной студии" loading="lazy">
+            <!-- свет фар: координаты в пикселях исходного фото 2000×1116 -->
+            <svg class="car__lights" viewBox="0 0 2000 1116" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g class="car__glow">
+                <ellipse cx="775" cy="600" rx="160" ry="62" fill="url(#hl-glow)"/>
+                <ellipse cx="1237" cy="602" rx="160" ry="62" fill="url(#hl-glow)"/>
+              </g>
+              <g class="car__flare">
+                <rect x="175" y="590" width="1200" height="20" fill="url(#hl-flare-soft)"/>
+                <rect x="175" y="598" width="1200" height="4" fill="url(#hl-flare)"/>
+                <rect x="637" y="592" width="1200" height="20" fill="url(#hl-flare-soft)"/>
+                <rect x="637" y="600" width="1200" height="4" fill="url(#hl-flare)"/>
+              </g>
+            </svg>
+            <span class="car__sweep" aria-hidden="true"></span>
           </div>
         </div>
       </div>
@@ -267,7 +323,7 @@
           <div class="how__dots" data-how-dots role="tablist" aria-label="Шаги"></div>
         </div>
 
-        <ol class="steps">
+        <ol class="steps" data-lenis-prevent>
           <li class="step is-active" data-step="0">
             <span class="step__num">01</span>
             <h3 class="step__title">Выберите машину</h3>
@@ -496,26 +552,41 @@
 
   <!-- ============ CTA ============ -->
   <section class="app" id="app">
-    <div class="app__bg" aria-hidden="true"><img src="assets/img/s-class.jpg" alt="" loading="lazy" data-parallax></div>
+    <div class="app__bg car__media--front" aria-hidden="true" data-ignite data-zoom="1.02">
+      <div class="car__layers" data-parallax>
+        <img src="assets/img/s-class-rear.jpg" alt="" loading="lazy">
+        <!-- стоп-огни: координаты в пикселях исходного фото 2000×1116 -->
+        <svg class="car__lights tail" viewBox="0 0 2000 1116" preserveAspectRatio="xMidYMid slice">
+          <ellipse class="tail__floor" cx="1370" cy="905" rx="340" ry="36" fill="url(#tl-glow)"/>
+          <g class="tail__glow">
+            <ellipse cx="1212" cy="570" rx="200" ry="74" fill="url(#tl-glow)"/>
+            <ellipse cx="1578" cy="566" rx="100" ry="58" fill="url(#tl-glow)"/>
+          </g>
+          <g class="tail__bars">
+            <rect class="tail__bar tail__bar--l" x="1112" y="561" width="192" height="14" rx="7"/>
+            <rect class="tail__bar tail__bar--r" x="1542" y="557" width="66" height="13" rx="6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
     <div class="wrap app__inner">
       <p class="label" data-reveal>07&nbsp;&nbsp;/&nbsp;&nbsp;Начать</p>
       <h2 class="app__title split" data-reveal>
-        <span class="line"><span>Первые 30&nbsp;минут —</span></span>
-        <span class="line"><span>за&nbsp;наш счёт</span></span>
+        <span class="line"><span>Сядьте за&nbsp;руль</span></span>
+        <span class="line"><span>флагмана</span></span>
       </h2>
       <div class="app__row" data-reveal style="--d:2">
-        <button class="promo" data-promo type="button">
-          <span class="label">Промокод</span>
-          <span class="promo__code">ХОД30</span>
-          <span class="promo__copy" data-promo-status>Скопировать</span>
-        </button>
+        <div class="offer">
+          <span class="offer__value">−10%</span>
+          <span class="offer__text">на&nbsp;первую поездку<small>начислится сама — вводить ничего не&nbsp;нужно</small></span>
+        </div>
         <div class="stores">
           <a class="btn btn--light" href="#app"><span>App Store</span></a>
           <a class="btn btn--line" href="#app"><span>Google Play</span></a>
           <a class="btn btn--line" href="#app"><span>RuStore</span></a>
         </div>
       </div>
-      <p class="app__fine" data-reveal style="--d:3">Промокод действует на&nbsp;первую поездку после регистрации на&nbsp;любом автомобиле парка.</p>
+      <p class="app__fine" data-reveal style="--d:3">Скидка действует на&nbsp;первую поездку после регистрации, на&nbsp;любом автомобиле парка и&nbsp;любом тарифе.</p>
     </div>
   </section>
 

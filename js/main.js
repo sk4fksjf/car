@@ -384,6 +384,21 @@
     intro?.remove();
   }
 
+  // кадр проявляется, когда фото первой машины уже готово — не показываем пустой экран
+  if (html.classList.contains('no-intro')) {
+    const first = stills[0];
+    let shown = false;
+    const reveal = () => {
+      if (shown) return;
+      shown = true;
+      requestAnimationFrame(() => requestAnimationFrame(() => hero.classList.add('is-shown')));
+    };
+    if (first.complete && first.naturalWidth) (first.decode ? first.decode().catch(() => {}) : Promise.resolve()).then(reveal);
+    else first.addEventListener('load', reveal, { once: true });
+    first.addEventListener('error', reveal, { once: true });
+    setTimeout(reveal, 2500); // медленный интернет — не держим экран тёмным дольше
+  }
+
   /* =========================================================
      Манифест: слова проявляются по мере скролла
      ========================================================= */
@@ -541,25 +556,84 @@
   );
   steps.forEach((s) => stepIO.observe(s));
 
-  // телефон: шаги листаются свайпом, экран телефона меняется вслед
-  const stepOffset = (i) => steps[i].offsetLeft - steps[0].offsetLeft;
-  stepsList.addEventListener('scroll', () => {
-    if (!howMobile.matches) return;
+  // телефон: шаги листаются свайпом, экран телефона меняется вслед.
+  // Шаг меняется, только когда карточка явно ближе остальных (зона ±35%),
+  // поэтому, если палец замер между карточками, ничего не мигает.
+  const maxScroll = () => stepsList.scrollWidth - stepsList.clientWidth;
+  const stepPos = (i) => Math.min(steps[i].offsetLeft - steps[0].offsetLeft, maxScroll());
+  const nearestStep = () => {
     const x = stepsList.scrollLeft;
     let best = 0;
-    steps.forEach((_, k) => {
-      if (Math.abs(stepOffset(k) - x) < Math.abs(stepOffset(best) - x)) best = k;
-    });
-    setStep(best);
+    steps.forEach((_, k) => { if (Math.abs(stepPos(k) - x) < Math.abs(stepPos(best) - x)) best = k; });
+    return best;
+  };
+  let lockStep = null; // пока листаем по нажатию на точку, промежуточные шаги не показываем
+  let settleTimer = 0;
+  const settle = () => { lockStep = null; setStep(nearestStep()); };
+  stepsList.addEventListener('scroll', () => {
+    if (!howMobile.matches) return;
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(settle, 140);
+    if (lockStep !== null) return;
+    const x = stepsList.scrollLeft;
+    const pitch = stepPos(1) - stepPos(0) || 1;
+    steps.forEach((_, k) => { if (Math.abs(stepPos(k) - x) < pitch * 0.35) setStep(k); });
   }, { passive: true });
-  stepDots.forEach((d, i) => d.addEventListener('click', () => {
-    stepsList.scrollTo({ left: stepOffset(i), behavior: reduced ? 'auto' : 'smooth' });
+  if ('onscrollend' in window) stepsList.addEventListener('scrollend', () => howMobile.matches && settle());
+
+  function goStep(i) {
+    i = clamp(i, 0, steps.length - 1);
+    lockStep = i;
     setStep(i);
-  }));
+    stepsList.scrollTo({ left: stepPos(i), behavior: reduced ? 'auto' : 'smooth' });
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(settle, 900); // на случай, если прокрутка не понадобилась
+  }
+  stepDots.forEach((d, i) => d.addEventListener('click', () => goStep(i)));
   // тап по шагу тоже переключает экран
-  steps.forEach((s, i) => s.addEventListener('click', () => {
-    if (howMobile.matches) stepDots[i].click();
-  }));
+  steps.forEach((s, i) => s.addEventListener('click', () => howMobile.matches && i !== stepNow && goStep(i)));
+
+  // сам телефон тоже можно листать пальцем: влево — следующий шаг, вправо — предыдущий
+  const phoneEl = $('.phone');
+  let px = null, py = null;
+  phoneEl.addEventListener('touchstart', (e) => { px = e.touches[0].clientX; py = e.touches[0].clientY; }, { passive: true });
+  phoneEl.addEventListener('touchend', (e) => {
+    if (px === null || !howMobile.matches) return;
+    const dx = e.changedTouches[0].clientX - px, dy = e.changedTouches[0].clientY - py;
+    px = py = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) goStep(stepNow + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* =========================================================
+     Автопарк: машина «просыпается», когда фото появилось на экране
+     ========================================================= */
+  const fronts = $$('[data-ignite]').map((el) => ({ el, layers: $('.car__layers', el), woke: null }));
+  const wakeIO = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      wakeIO.unobserve(e.target);
+      const f = fronts.find((x) => x.el === e.target);
+      // ждём, пока шторка откроет кадр, — и включаем фары
+      setTimeout(() => { f.el.classList.add('is-awake'); f.woke = performance.now(); }, reduced ? 0 : 750);
+    }),
+    { threshold: 0.45 }
+  );
+  fronts.forEach((f) => wakeIO.observe(f.el));
+
+  // наезд камеры: при появлении кадр «оседает» с 1.16, дальше медленно приближается по скроллу
+  function updateFronts(now, vh) {
+    fronts.forEach((f) => {
+      const r = f.el.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) return;
+      const t = f.woke === null ? 0 : clamp((now - f.woke) / 2600);
+      const settle = 1 + 0.16 * Math.pow(1 - t, 3);
+      const p = clamp((vh - r.top) / (vh + r.height));
+      // на телефоне камера ближе — машина крупнее; data-zoom задаёт свой масштаб
+      const base = f.el.dataset.zoom ? +f.el.dataset.zoom : innerWidth < 760 ? 1.32 : 1.08;
+      const push = f.el.dataset.zoom ? 0.04 : 0.12;
+      f.layers.style.scale = (settle * (base + p * push)).toFixed(4);
+    });
+  }
 
   /* =========================================================
      Покадровые эффекты
@@ -628,6 +702,7 @@
         const c = (r.top + r.height / 2 - vh / 2) / vh;
         img.style.transform = `translate3d(0, ${c * -6}%, 0)`;
       });
+      updateFronts(now, vh);
     } else {
       expandFrame.style.setProperty('--p', 1);
       expandText.style.opacity = 1;
@@ -639,7 +714,7 @@
   requestAnimationFrame(frame);
 
   /* =========================================================
-     Мелочи: меню, FAQ, промокод, год
+     Мелочи: меню, FAQ, год
      ========================================================= */
   const burger = $('[data-burger]');
   function closeMenu() {
@@ -664,16 +739,6 @@
     })
   );
 
-  const promoStatus = $('[data-promo-status]');
-  $('[data-promo]').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText('ХОД30');
-      promoStatus.textContent = 'Скопировано';
-    } catch {
-      promoStatus.textContent = 'ХОД30';
-    }
-    setTimeout(() => (promoStatus.textContent = 'Скопировать'), 1800);
-  });
 
   $('[data-year]').textContent = new Date().getFullYear();
 })();

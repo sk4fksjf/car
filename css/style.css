@@ -257,6 +257,18 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* пока идёт вступление, кадр медленно «оседает», а текст ждёт своей очереди */
 .intro-play .hero__media { animation: hero-settle 3s cubic-bezier(.2, .7, .2, 1) 1.6s both; }
 @keyframes hero-settle { from { scale: 1.14; } to { scale: 1; } }
+/* обычный заход и обновление страницы: кадр выходит из темноты и «оседает» */
+.js.no-intro .hero__media { scale: 1.08; transition: scale 2.8s cubic-bezier(.2, .7, .2, 1); }
+.js.no-intro .hero__media::after {
+  content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: var(--bg); transition: opacity 1.8s cubic-bezier(.4, 0, .2, 1);
+}
+.js.no-intro .hero.is-shown .hero__media { scale: 1; }
+.js.no-intro .hero.is-shown .hero__media::after { opacity: 0; }
+/* текст появляется чуть позже кадра */
+.no-intro .hero [data-reveal] { transition-delay: calc(.45s + var(--d, 0) * 110ms); }
+.no-intro .hero .split .line > span { transition-delay: .45s; }
+.no-intro .hero .split .line:nth-child(2) > span { transition-delay: .55s; }
 .intro-play .hero [data-reveal] { transition-delay: calc(2.1s + var(--d, 0) * 110ms); }
 .intro-play .hero .split .line > span { transition-delay: 2.1s; }
 .intro-play .hero .split .line:nth-child(2) > span { transition-delay: 2.2s; }
@@ -302,6 +314,34 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .car__layers { position: absolute; left: 0; top: -5%; width: 100%; height: 110%; will-change: transform; }
 .car__layers img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
 
+/* «Машина просыпается»: фото спереди — фары вспыхивают, студия светлеет */
+.car__media--front .car__layers img {
+  object-position: 50% 50%;
+  filter: brightness(.2) saturate(.35) contrast(1.06);
+  transition: filter 2.6s cubic-bezier(.3, .7, .2, 1) .5s;
+}
+.car__media--front.is-awake .car__layers img { filter: brightness(1) saturate(.45) contrast(1.04); }
+.js .car__media--front[data-reveal="clip"] img { scale: none; } /* масштаб ведёт скрипт — вместе со светом */
+.car__lights {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+  mix-blend-mode: screen; pointer-events: none;
+  transition: filter .9s var(--ease);
+}
+.car__glow, .car__flare rect { opacity: 0; }
+.car__flare rect { transform-box: fill-box; transform-origin: center; }
+.is-awake .car__glow { animation: hl-ignite 1.9s ease-out forwards; }
+.is-awake .car__flare rect { animation: hl-flare 2.4s cubic-bezier(.2, .7, .2, 1) forwards; }
+@keyframes hl-ignite { 0% { opacity: 0; } 6% { opacity: .9; } 11% { opacity: .12; } 17% { opacity: 1; } 55% { opacity: 1; } 100% { opacity: .55; } }
+@keyframes hl-flare { 0% { opacity: 0; transform: scaleX(.08); } 15% { opacity: 1; transform: scaleX(1); } 100% { opacity: .32; transform: scaleX(1); } }
+/* блик, который один раз проходит по кузову */
+.car__sweep {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.05) 46%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.05) 54%, transparent 62%);
+  transform: translateX(-110%);
+}
+.is-awake .car__sweep { animation: car-sweep 2.6s cubic-bezier(.45, 0, .2, 1) 1.5s forwards; }
+@keyframes car-sweep { to { transform: translateX(110%); } }
+@media (hover: hover) { .car__media--front:hover .car__lights { filter: brightness(1.7); } }
 .car__body .label { margin-bottom: 26px; }
 .car__title { font-size: clamp(44px, 5vw, 84px); font-weight: 200; line-height: .95; letter-spacing: -.05em; }
 .car__title span { display: block; margin-top: 18px; font-size: 15px; font-weight: 400; letter-spacing: .04em; color: var(--mute); }
@@ -547,17 +587,44 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* ============ CTA ============ */
 .app { position: relative; overflow: hidden; padding-block: clamp(140px, 22vh, 260px); border-top: 1px solid var(--line); }
-.app__bg { position: absolute; inset: 0; }
-.app__bg img { position: absolute; top: -10%; width: 100%; height: 120%; object-fit: cover; object-position: 50% 60%; opacity: .5; will-change: transform; }
-.app__bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,6,6,.95) 0%, rgba(6,6,6,.6) 55%, rgba(6,6,6,.25) 100%), linear-gradient(0deg, #060606 0%, rgba(6,6,6,0) 30%), linear-gradient(180deg, #060606 0%, rgba(6,6,6,0) 30%); }
+/* фон блока: машина сзади справа, текст слева */
+/* фото в своих пропорциях — машина всегда целиком, края растворяются в фоне */
+.app__bg {
+  position: absolute; right: 0; top: 50%; width: min(74%, 150vh); aspect-ratio: 2000 / 1116; translate: 0 -50%; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 84%, transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 84%, transparent 100%);
+}
+.app__bg .car__layers { position: absolute; inset: -4% 0; }
+.app__bg .car__layers img { width: 100%; height: 100%; object-fit: cover; }
+.app__bg::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, #060606 0%, rgba(6,6,6,.8) 12%, rgba(6,6,6,0) 40%),
+    linear-gradient(270deg, #060606 0%, rgba(6,6,6,0) 10%);
+}
+/* стоп-огни: загораются от центра машины к краям, как бегущие LED */
+.tail__bars { filter: blur(1.6px); }
+.tail__bar { fill: #ff2d22; transform-box: fill-box; transform: scaleX(0); }
+.tail__bar--l { transform-origin: 100% 50%; }
+.tail__bar--r { transform-origin: 0 50%; }
+.tail__glow, .tail__floor { opacity: 0; }
+.is-awake .tail__bar { animation: tl-run .8s cubic-bezier(.6, 0, .2, 1) forwards, tl-dim 2.4s ease-out .9s forwards; }
+.is-awake .tail__bar--r { animation-delay: .32s, 1.2s; }
+.is-awake .tail__glow { animation: tl-glow 2.6s ease-out .45s forwards; }
+.is-awake .tail__floor { animation: tl-floor 2.4s ease-out .7s forwards; }
+@keyframes tl-run { to { transform: scaleX(1); } }
+@keyframes tl-dim { 0% { opacity: 1; } 100% { opacity: .5; } }
+@keyframes tl-glow { 0% { opacity: 0; } 12% { opacity: .95; } 18% { opacity: .35; } 28% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: .7; } }
+@keyframes tl-floor { to { opacity: .45; } }
 .app__inner { position: relative; }
+.app .btn--line { background: rgba(6, 6, 6, .5); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .app__inner > .label { margin-bottom: 28px; }
 .app__title { font-size: clamp(40px, 6.6vw, 112px); font-weight: 200; line-height: 1; letter-spacing: -.05em; }
 .app__row { margin-top: clamp(48px, 6vw, 80px); display: flex; flex-wrap: wrap; gap: 24px 40px; align-items: center; }
-.promo { display: flex; align-items: center; gap: 22px; padding: 14px 14px 14px 26px; border: 1px solid var(--line-2); border-radius: 999px; transition: border-color .4s; }
-.promo:hover { border-color: var(--fg); }
-.promo__code { font-size: 22px; font-weight: 300; letter-spacing: .14em; }
-.promo__copy { height: 40px; padding: 0 18px; border-radius: 999px; display: grid; place-items: center; background: var(--fg); color: var(--bg); font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.offer { display: flex; align-items: center; gap: 22px; padding-right: 12px; }
+.offer__value { font-size: clamp(44px, 4.4vw, 64px); font-weight: 200; line-height: 1; letter-spacing: -.05em; }
+.offer__text { display: flex; flex-direction: column; gap: 4px; padding-left: 22px; border-left: 1px solid var(--line-2); font-size: 15px; color: var(--fg); }
+.offer__text small { font-size: 13px; color: var(--mute); }
 .stores { display: flex; flex-wrap: wrap; gap: 10px; }
 .app__fine { margin-top: 32px; color: var(--mute); font-size: 14px; max-width: 56ch; }
 
@@ -631,6 +698,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     scrollbar-width: none; overscroll-behavior-x: contain;
   }
   .steps::-webkit-scrollbar { display: none; }
+  /* последняя карточка прилипает к правому краю — иначе прилипание «спорит» с концом ряда */
+  .steps .step:last-child { scroll-snap-align: end; }
+  .steps .step { scroll-snap-stop: always; }
+  .how__dot { -webkit-tap-highlight-color: transparent; }
+  .how__dot:focus { outline: none; }
+  .how__dot:focus-visible { outline: 1px solid var(--fg); outline-offset: -4px; border-radius: 50%; }
+  .phone { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
   .step, .step:first-child {
     flex: 0 0 86%; min-height: 0; justify-content: flex-start;
     padding: 26px 22px 30px; border: 1px solid var(--line); border-radius: 4px;
@@ -664,6 +738,18 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 
 /* на телефоне видео — отдельный кадр 16:10 между текстом и панелью */
+/* блок «Начать» на телефонах и вертикальных экранах: текст, под ним машина целиком */
+@media (max-width: 760px), (max-aspect-ratio: 5/4) {
+  .app { display: flex; flex-direction: column; padding-block: clamp(90px, 14vw, 140px) 0; }
+  .app__inner { order: 1; width: 100%; }
+  .app__bg {
+    order: 2; position: relative; inset: auto; translate: none; width: 100%; aspect-ratio: 16 / 10; margin-top: 24px;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 84%, transparent 100%);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 84%, transparent 100%);
+  }
+  .app__bg::after { display: none; }
+}
+
 /* первый экран «стопкой»: телефоны и любые вертикальные экраны (планшеты) */
 @media (max-width: 760px), (max-aspect-ratio: 5/4) {
   .hero { height: auto; min-height: 100svh; display: flex; flex-direction: column; }
@@ -700,6 +786,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 @media (max-width: 760px) {
 
   .expand__frame { clip-path: inset(calc((1 - var(--p)) * 30%) calc((1 - var(--p)) * 8%) round calc((1 - var(--p)) * 4px)); }
+  /* на вертикальном экране фото — широкая полоса, чтобы в кадр попали обе машины */
+  .expand__frame img {
+    position: absolute; left: 0; top: 14%; height: 58%;
+    object-position: 50% 55%;
+    transform: scale(calc(1.12 - var(--p) * .12));
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 80%, transparent 100%);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 80%, transparent 100%);
+  }
 }
 
 @media (max-width: 560px) {
@@ -712,9 +806,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .perks { grid-template-columns: 1fr; }
   .perk, .perk:nth-child(even), .perk:not(:nth-child(3n+1)) { padding: 28px 0 32px; border-left: 0; }
   .perk__title { margin-top: 22px; }
-  .promo { width: 100%; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 20px; }
-  .promo__code { font-size: 19px; letter-spacing: .1em; }
-  .promo__copy { padding: 0 14px; }
+  .offer { width: 100%; }
   .stores { width: 100%; }
   .stores .btn { flex: 1 1 100%; }
   .footer__bottom { flex-wrap: wrap; }
