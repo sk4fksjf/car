@@ -750,6 +750,25 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .app__bg::after { display: none; }
 }
 
+/* блок «Начать» на телефоне: машина сверху крупно, заголовок заходит на фото */
+@media (max-width: 760px) {
+  .app { padding-block: 48px 84px; }
+  .app__bg {
+    order: 1; aspect-ratio: 4 / 3; margin-top: 0;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 62%, transparent 100%);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 70%, transparent 100%);
+  }
+  .app__bg .car__layers { inset: 0; }
+  .app__inner { order: 2; position: relative; z-index: 2; margin-top: -34px; }
+  .app__inner > .label { margin-bottom: 16px; }
+  .app__title { font-size: clamp(40px, 11.5vw, 56px); }
+  .app__row { margin-top: 34px; gap: 26px; }
+  .stores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+  .stores .btn:first-child { grid-column: 1 / -1; }
+  .stores .btn { height: 52px; padding: 0 12px; }
+  .app__fine { margin-top: 24px; font-size: 13px; }
+}
+
 /* первый экран «стопкой»: телефоны и любые вертикальные экраны (планшеты) */
 @media (max-width: 760px), (max-aspect-ratio: 5/4) {
   .hero { height: auto; min-height: 100svh; display: flex; flex-direction: column; }
