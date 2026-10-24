@@ -377,9 +377,9 @@
   const html = document.documentElement;
   if (html.classList.contains('intro-play') && intro) {
     try { sessionStorage.setItem('hod-intro', '1'); } catch (e) { /* приватный режим */ }
-    const skip = () => { html.classList.add('intro-skip'); intro.remove(); };
+    const skip = () => { html.classList.add('intro-skip'); intro.remove(); html.classList.remove('intro-play'); };
     intro.addEventListener('click', skip);
-    setTimeout(() => intro.isConnected && intro.remove(), 3400);
+    setTimeout(() => { intro.isConnected && intro.remove(); html.classList.remove('intro-play'); }, 3400);
   } else {
     intro?.remove();
   }
@@ -493,21 +493,38 @@
   /* =========================================================
      Появление при скролле, счётчики, шаги
      ========================================================= */
+  // Эффекты повторяются: элемент целиком ушёл за экран — сбрасываем его
+  // мгновенно (без обратной анимации), вернулся — проигрываем заново.
+  function rearm(el, cls) {
+    el.classList.add('is-reset');
+    el.classList.remove(...cls);
+    el.getBoundingClientRect();
+    requestAnimationFrame(() => el.classList.remove('is-reset'));
+  }
   const io = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('is-in');
-      io.unobserve(e.target);
+      if (e.isIntersecting) e.target.classList.add('is-in');
     }),
     { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }
   );
-  $$('[data-reveal], [data-footer-word]').forEach((el) => io.observe(el));
+  const leaveIO = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (!e.isIntersecting && e.target.classList.contains('is-in')) rearm(e.target, ['is-in']);
+    }),
+    { threshold: 0 }
+  );
+  $$('[data-reveal], [data-footer-word]').forEach((el) => { io.observe(el); leaveIO.observe(el); });
 
   const countIO = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      countIO.unobserve(e.target);
       const el = e.target;
+      if (!e.isIntersecting) {
+        // ушёл с экрана — в следующий раз снова посчитаем с нуля
+        if (e.intersectionRatio === 0) { el.dataset.counted = ''; el.textContent = '0'; }
+        return;
+      }
+      if (el.dataset.counted) return;
+      el.dataset.counted = '1';
       const to = parseFloat(el.dataset.countTo);
       if (reduced) return (el.textContent = to.toLocaleString('ru-RU'));
       const t0 = performance.now();
@@ -520,7 +537,7 @@
       };
       requestAnimationFrame(tick);
     }),
-    { threshold: 0.6 }
+    { threshold: [0, 0.6] }
   );
   $$('[data-count-to]').forEach((el) => countIO.observe(el));
 
@@ -610,13 +627,20 @@
   const fronts = $$('[data-ignite]').map((el) => ({ el, layers: $('.car__layers', el), woke: null }));
   const wakeIO = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      wakeIO.unobserve(e.target);
       const f = fronts.find((x) => x.el === e.target);
+      if (!e.isIntersecting || e.intersectionRatio < 0.45) {
+        // ушла с экрана — гасим свет, чтобы при возвращении машина снова «проснулась»
+        if (e.intersectionRatio === 0 && (f.woke !== null || f.timer)) {
+          clearTimeout(f.timer); f.timer = 0; f.woke = null;
+          rearm(f.el, ['is-awake']);
+        }
+        return;
+      }
+      if (f.woke !== null || f.timer) return;
       // ждём, пока шторка откроет кадр, — и включаем фары
-      setTimeout(() => { f.el.classList.add('is-awake'); f.woke = performance.now(); }, reduced ? 0 : 750);
+      f.timer = setTimeout(() => { f.timer = 0; f.el.classList.add('is-awake'); f.woke = performance.now(); }, reduced ? 0 : 750);
     }),
-    { threshold: 0.45 }
+    { threshold: [0, 0.45] }
   );
   fronts.forEach((f) => wakeIO.observe(f.el));
 

@@ -67,6 +67,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   transition-delay: calc(var(--d, 0) * 110ms);
 }
 .js [data-reveal].is-in { opacity: 1; transform: none; }
+/* мгновенный сброс эффекта за экраном, чтобы он проигрался заново */
+.is-reset, .is-reset *, .is-reset *::before, .is-reset *::after { transition: none !important; animation: none !important; }
 
 .split .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
 .split .line > span { display: inline-block; }
